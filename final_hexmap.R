@@ -60,12 +60,13 @@ shapes_data <- readOGR(dsn="Shapes/.")
 
 #centroids@bbox
 
-n_row <-  abs(round(shapes_data@bbox["y","max"],0)-round(shapes_data@bbox["y","min"],0))*10
-n_col <-  abs(round(shapes_data@bbox["x","max"],0)-round(shapes_data@bbox["x","min"],0))*10
-
-startPoint <- c(round(shapes_data@bbox["x","min"],0),round(shapes_data@bbox["y","min"],0))*10
-
 size <- 1
+n_row <-  abs(round(shapes_data@bbox["y","max"],0)-round(shapes_data@bbox["y","min"],0))*10*size
+n_col <-  abs(round(shapes_data@bbox["x","max"],0)-round(shapes_data@bbox["x","min"],0))*10*size
+
+startPoint <- c(round(shapes_data@bbox["x","min"],0),round(shapes_data@bbox["y","min"],0))*10*size
+
+
 
 #Build the hexgrid of the shapes bounding box
 
@@ -111,8 +112,8 @@ for(z in 1:(n_row)){
 
 positions <- do.call("rbind",poly_list)
 
-positions$Lat <- positions$Lat/10
-positions$Lng <- positions$Lng/10
+positions$Lat <- positions$Lat/10*size
+positions$Lng <- positions$Lng/10*size
 
 #build hexagon spatial polygons 
 df_to_spp <- positions %>%
@@ -186,7 +187,7 @@ leaflet() %>%
 
 hex_grid <- buildHexGrid(n_row,n_col,size,"flat")
 
-final_hexagons <- hex_grid[rgeos::gContains(convex,hex_grid,byid=T)[,1],]
+final_hexagons <- hex_grid[rgeos::gContains(uk_shape,hex_grid,byid=T)[,1],]
 
 hexagon_centroids <- as.data.frame(centroid(final_hexagons))
 colnames(hexagon_centroids) <- c("Longitude","Latitude")
@@ -213,7 +214,7 @@ library(htmltools)
 #plot the final map
 leaflet() %>% 
   addTiles("CartoDB.Positron") %>%
-  addPolygons(data=final_hexagons,fillColor = "red",weight = 0.1,label=~htmlEscape(postcode_sector))
+  addPolygons(data=final_hexagons,fillColor = "red",weight = 0.1)#label=~htmlEscape(postcode_sector))
   
 
 plot(final_hexagons)
