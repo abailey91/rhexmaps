@@ -24,5 +24,8 @@ shapes_data_gb <- gUnaryUnion(shapes_data,id=shapes_data@data$country)
 
 #draw hexagon map
 #debug(draw_hexmap)
-draw_hexmap(shape_spatdf = shapes_data_gb,hex_size = 0.05,hex_orientation = "pointy",buildMap = T,tileProvider = providers$CartoDB.Positron,cullingMethod = "contains")
+map <- draw_hexmap(shape_spatdf = shapes_data_gb,hex_size = 0.1,hex_orientation = "pointy",buildMap = T,tileProvider = providers$CartoDB.Positron,cullingMethod = "intersects")
 
+
+map %>%
+  addMarkers(data=postcode_sector_latlng,lng=~Longitude,lat=~Latitude,label=htmlEscape(~postcode_sector),clusterOptions = markerClusterOptions())

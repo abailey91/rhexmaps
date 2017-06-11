@@ -31,7 +31,7 @@ draw_hexmap <- function(shape_spatdf,hex_size,hex_orientation="flat",buildMap=F,
     #addPolylines(data=shape_spatdf)
     
   }else{
-    plot(final_hexagons)
+    return(final_hexagons)
   }
 }
 
