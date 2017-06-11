@@ -1,7 +1,16 @@
 library(dplyr)
 
+bbox <- gEnvelope(uk_polygon)
+
 draw_hexmap <- function(shape_spatdf,hex_size,hex_orientation="flat",buildMap=F,tileProvider=providers$OpenStreetMap,cullingMethod="intersects"){
   
+  #check if bounding box exists - if not make it
+  if("bbox" %in% slotNames(shape_spatdf)==F){
+    stop("No bbox element found in shapefile")
+  }  
+  
+     
+     
   #compute size of the grid and the starting coordinate for the grid
   n_row <-  abs(round(shape_spatdf@bbox["y","max"],0)-round(shape_spatdf@bbox["y","min"],0))/hex_size#*10*size
   n_col <-  abs(round(shape_spatdf@bbox["x","max"],0)-round(shape_spatdf@bbox["x","min"],0))/hex_size#*10*size
