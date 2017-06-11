@@ -70,7 +70,7 @@ startPoint <- c(round(shapes_data@bbox["x","min"],0),round(shapes_data@bbox["y",
 
 #Build the hexgrid of the shapes bounding box
 
-buildHexGrid <- function(n_row,n_col,size,orientation="pointy"){
+buildHexGrid <- function(n_row,n_col,size,startPoint,orientation="pointy"){
 #calculate number of required hexagons  
 n_hexagons <- n_row*n_col
 
@@ -112,8 +112,8 @@ for(z in 1:(n_row)){
 
 positions <- do.call("rbind",poly_list)
 
-positions$Lat <- positions$Lat/10*size
-positions$Lng <- positions$Lng/10*size
+positions$Lat <- positions$Lat/size
+positions$Lng <- positions$Lng/size
 
 #build hexagon spatial polygons 
 df_to_spp <- positions %>%
@@ -131,8 +131,8 @@ df_to_spp <- SpatialPolygonsDataFrame(df_to_spp,data = data.frame(id=1:length(df
 return(df_to_spp)
 }
 
-test <- buildHexGrid(10,10,1,"flat")
-plot(test)
+#test <- buildHexGrid(10,10,1,"flat")
+#plot(test)
 
 
 ########################################################################
@@ -187,7 +187,7 @@ leaflet() %>%
 
 hex_grid <- buildHexGrid(n_row,n_col,size,"flat")
 
-final_hexagons <- hex_grid[rgeos::gContains(uk_shape,hex_grid,byid=T)[,1],]
+final_hexagons <- hex_grid[rgeos::gIntersects(uk_shape,hex_grid,byid=T)[,1],]
 
 hexagon_centroids <- as.data.frame(centroid(final_hexagons))
 colnames(hexagon_centroids) <- c("Longitude","Latitude")
